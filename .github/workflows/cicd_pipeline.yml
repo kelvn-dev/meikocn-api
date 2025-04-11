@@ -7,6 +7,7 @@ on:
 
 env:
   IMAGE_NAME: "meikocn-api"
+  TARGET_SERVER_PATH: "meikocn"
 
 jobs:
   ci:
@@ -73,13 +74,12 @@ jobs:
 
       - name: Deploy to remote server
         run: |
-          echo "Using image: ${IMAGE_TAG}"
           ssh -i ~/.ssh/deploy_ssh_key -o StrictHostKeyChecking=no \
               -o IdentitiesOnly=yes \
               -o ProxyCommand='cloudflared access ssh --hostname %h' \
-              ${{secrets.SERVER_USER}}@${{secrets.SERVER_SSH_HOST}} "
+              ${{secrets.SERVER_USERNAME}}@${{secrets.SERVER_SSH_HOST}} "
             mkdir -p ~/.docker && echo '{\"credsStore\":\"\"}' > ~/.docker/config.json && \
-            cd ~/vinpos && \
+            cd ~/${{env.TARGET_SERVER_PATH}} && \
             pwd && \
             ls -a && \
             sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" docker-compose.yml && \
