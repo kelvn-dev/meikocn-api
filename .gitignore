@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Secret ###
+application*.properties
+application*.yaml
+
+### Docker ###
+/volumes/**
