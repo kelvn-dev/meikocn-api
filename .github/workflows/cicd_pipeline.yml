@@ -1,0 +1,87 @@
+name: CI/CD pipeline
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: "meikocn-api"
+
+jobs:
+  ci:
+    runs-on: [ubuntu-latest]
+    outputs:
+      image_tag: sha-${{ steps.sha.outputs.short }}
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Get short SHA
+        id: sha
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download application.yaml from S3
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          aws s3 cp s3://$S3_BUCKET_NAME/config/application.yaml src/main/resources/application.yaml
+
+      - name: Extract Metadata
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}
+          tags: type=sha
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+          logout: true
+
+      - name: Build And Push
+        uses: docker/build-push-action@v5
+        with:
+          context: . # indicates the location of the Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Cloudflared
+        run: |
+          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i cloudflared.deb
+          rm cloudflared.deb
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_ssh_key
+          chmod 600 ~/.ssh/deploy_ssh_key
+
+      - name: Deploy to remote server
+        run: |
+          echo "Using image: ${IMAGE_TAG}"
+          ssh -i ~/.ssh/deploy_ssh_key -o StrictHostKeyChecking=no \
+              -o IdentitiesOnly=yes \
+              -o ProxyCommand='cloudflared access ssh --hostname %h' \
+              ${{secrets.SERVER_USER}}@${{secrets.SERVER_SSH_HOST}} "
+            mkdir -p ~/.docker && echo '{\"credsStore\":\"\"}' > ~/.docker/config.json && \
+            cd ~/vinpos && \
+            pwd && \
+            ls -a && \
+            sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" docker-compose.yml && \
+            DOCKER_CONFIG=~/.docker /usr/local/bin/docker compose up -d
+          "
