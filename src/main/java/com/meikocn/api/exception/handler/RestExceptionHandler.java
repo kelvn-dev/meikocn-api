@@ -82,7 +82,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     return buildResponseEntity(apiError);
   }
 
-  @ExceptionHandler({VinposException.class, RuntimeException.class, IllegalStateException.class})
+  @ExceptionHandler({BaseException.class, RuntimeException.class, IllegalStateException.class})
   protected ResponseEntity<Object> handleRuntime(RuntimeException ex) {
     ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
     apiError.setMessage(ex.getMessage());

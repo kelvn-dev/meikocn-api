@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import org.springframework.util.StringUtils;
 
-public class ConflictException extends VinposException {
+public class ConflictException extends BaseException {
 
   public ConflictException(Class clazz, String... searchParamsMap) {
     super(

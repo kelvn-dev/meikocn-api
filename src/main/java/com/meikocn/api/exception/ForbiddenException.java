@@ -1,6 +1,6 @@
 package com.meikocn.api.exception;
 
-public class ForbiddenException extends VinposException {
+public class ForbiddenException extends BaseException {
 
   public ForbiddenException() {}
 

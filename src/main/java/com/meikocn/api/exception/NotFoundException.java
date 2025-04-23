@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import org.springframework.util.StringUtils;
 
-public class NotFoundException extends VinposException {
+public class NotFoundException extends BaseException {
 
   public NotFoundException(Class clazz, String... searchParamsMap) {
     super(

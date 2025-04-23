@@ -13,6 +13,7 @@ public class Auth0Config {
   private String domain;
   private String dbConnection;
   private String managementAPI;
+  private String apiIdentifier;
   private UserManagement userManagement;
 
   @Getter

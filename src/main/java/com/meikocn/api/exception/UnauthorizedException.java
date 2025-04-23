@@ -1,6 +1,6 @@
 package com.meikocn.api.exception;
 
-public class UnauthorizedException extends VinposException {
+public class UnauthorizedException extends BaseException {
 
   public UnauthorizedException() {}
 
