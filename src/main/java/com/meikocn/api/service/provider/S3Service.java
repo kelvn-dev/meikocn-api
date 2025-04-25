@@ -3,7 +3,6 @@ package com.meikocn.api.service.provider;
 import com.meikocn.api.config.AWSPropConfig;
 import com.meikocn.api.enums.ContentDisposition;
 import com.meikocn.api.exception.BaseException;
-import com.meikocn.api.utils.HelperUtils;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +34,12 @@ public class S3Service {
 
   /** For uploading */
   public PresignedPutObjectRequest getPresignedUrl(
-      JwtAuthenticationToken token, String contentType, ObjectCannedACL acl) {
+      JwtAuthenticationToken token, String key, String contentType, ObjectCannedACL acl) {
     try {
-      String randomString = HelperUtils.getRandomString();
-      String key = String.format("%s/%s", awsPropConfig.getS3().getPrefix(), randomString);
-
       PutObjectRequest objectRequest =
           PutObjectRequest.builder()
               .bucket(awsPropConfig.getS3().getBucket())
-              .key(key)
+              .key(String.format("%s/%s", awsPropConfig.getS3().getPrefix(), key))
               .contentType(contentType)
               .acl(acl)
               .metadata(Map.of("modified-by", token.getToken().getSubject()))
@@ -98,33 +94,11 @@ public class S3Service {
       ListObjectVersionsRequest request =
           ListObjectVersionsRequest.builder()
               .bucket(awsPropConfig.getS3().getBucket())
-              .prefix(key)
+              .prefix(String.format("%s/%s", awsPropConfig.getS3().getPrefix(), key))
               .build();
 
       ListObjectVersionsResponse response = s3Client.listObjectVersions(request);
       return response.versions();
-
-      //      return response.versions().stream()
-      //          .map(version -> {
-      //            // Get metadata for each version
-      //            HeadObjectRequest headRequest = HeadObjectRequest.builder()
-      //                .bucket(awsPropConfig.getS3().getBucket())
-      //                .key(version.key())
-      //                .versionId(version.versionId())
-      //                .build();
-      //
-      //            HeadObjectResponse headResponse = s3Client.headObject(headRequest);
-      //            Map<String, String> metadata = headResponse.metadata();
-      //
-      //            return new FileVersionInfo(
-      //                version.key(),
-      //                version.versionId(),
-      //                version.lastModified(),
-      //                version.isLatest(),
-      //                metadata.get("modified-by")
-      //            );
-      //          })
-      //          .collect(Collectors.toList());
     } catch (S3Exception e) {
       throw new BaseException(e.getMessage());
     }

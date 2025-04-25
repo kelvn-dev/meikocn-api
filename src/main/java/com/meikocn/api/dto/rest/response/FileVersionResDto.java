@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class FileVersionResDto {
-  private String key;
   private String versionId;
   private Instant lastModified;
   private Boolean isLatest;
