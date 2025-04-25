@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -30,8 +31,11 @@ public class S3Controller implements SecuredRestController {
    */
   @GetMapping("/presigned-request")
   public ResponseEntity<?> getPresignedGetUrl(
-      @RequestParam String key, @RequestParam ContentDisposition contentDisposition) {
-    PresignedGetObjectRequest request = s3Service.getPresignedUrl(key, contentDisposition);
+      @RequestParam String key,
+      @RequestParam ContentDisposition contentDisposition,
+      @RequestParam(required = false) String versionId) {
+    PresignedGetObjectRequest request =
+        s3Service.getPresignedUrl(key, versionId, contentDisposition);
     PresignedObjectRequestDto dto = s3Mapper.getObjectRequest2Dto(request);
     return ResponseEntity.ok(dto);
   }
@@ -42,8 +46,10 @@ public class S3Controller implements SecuredRestController {
    */
   @PostMapping("/presigned-request")
   public ResponseEntity<?> getPresignedPutObjectRequest(
-      @RequestParam String contentType, @RequestParam ObjectCannedACL acl) {
-    PresignedPutObjectRequest request = s3Service.getPresignedUrl(contentType, acl);
+      JwtAuthenticationToken token,
+      @RequestParam String contentType,
+      @RequestParam ObjectCannedACL acl) {
+    PresignedPutObjectRequest request = s3Service.getPresignedUrl(token, contentType, acl);
     PresignedObjectRequestDto dto = s3Mapper.putObjectRequest2Dto(request);
     return ResponseEntity.ok(dto);
   }

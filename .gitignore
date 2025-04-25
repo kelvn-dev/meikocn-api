@@ -34,7 +34,7 @@ build/
 
 ### Secret ###
 application*.properties
-application*.yaml
+src/main/java/resources/application.yaml
 
 ### Docker ###
 /volumes/**

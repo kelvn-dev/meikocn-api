@@ -13,6 +13,9 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 
 @Mapper(componentModel = "spring")
 public interface S3Mapper {
+
+  //  FileVersionResDto objectVersions2Dto(ObjectVersion objectVersion);
+
   @Mapping(target = "url", expression = "java( request.url().toString() )")
   @Mapping(target = "signedHeaders", source = "request", qualifiedByName = "signedHeaders")
   @Mapping(target = "expiration", expression = "java( request.expiration().toEpochMilli() )")
