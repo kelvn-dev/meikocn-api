@@ -34,7 +34,7 @@ public class UserController implements SecuredRestController {
 
   @PostMapping
   @PreAuthorize("hasAuthority('write:users')")
-  public ResponseEntity<?> create(@RequestBody UserReqDto reqDto) {
+  public ResponseEntity<?> invite(@Valid @RequestBody UserReqDto reqDto) {
     User user = userService.invite(reqDto);
     rabbitTemplate.convertAndSend("x.user-invitation", "", user);
     return ResponseEntity.ok(null);

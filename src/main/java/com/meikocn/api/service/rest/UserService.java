@@ -131,6 +131,7 @@ public class UserService {
     return repository.save(user);
   }
 
+  @Transactional
   public void reset(String token, UserResetReqDto reqDTO) {
     User user = this.getByInviteToken(token, false);
     user.setInviteToken(null);

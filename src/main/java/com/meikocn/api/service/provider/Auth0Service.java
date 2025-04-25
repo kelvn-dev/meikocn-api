@@ -56,13 +56,6 @@ public class Auth0Service {
     return executeRequest(request);
   }
 
-  /**
-   * Todo: implement sending user invitation instead of creation
-   *
-   * @param email
-   * @param permissions
-   * @return
-   */
   public User createUser(String email, List<String> permissions) {
     User user = new User(auth0Config.getDbConnection());
     user.setEmail(email);
@@ -71,19 +64,22 @@ public class Auth0Service {
     Request<User> request = managementAPI.users().create(user);
     user = executeRequest(request);
 
-    List<Permission> auth0Permissions =
-        permissions.stream()
-            .map(
-                s -> {
-                  Permission permission = new Permission();
-                  permission.setName(s);
-                  permission.setResourceServerId(auth0Config.getApiIdentifier());
-                  return permission;
-                })
-            .toList();
-    Request<Void> permissionRequest =
-        managementAPI.users().addPermissions(user.getId(), auth0Permissions);
-    executeRequest(permissionRequest);
+    if (!permissions.isEmpty()) {
+      List<Permission> auth0Permissions =
+          permissions.stream()
+              .map(
+                  s -> {
+                    Permission permission = new Permission();
+                    permission.setName(s);
+                    permission.setResourceServerId(auth0Config.getApiIdentifier());
+                    return permission;
+                  })
+              .toList();
+      Request<Void> permissionRequest =
+          managementAPI.users().addPermissions(user.getId(), auth0Permissions);
+      executeRequest(permissionRequest);
+    }
+
     return user;
   }
 
