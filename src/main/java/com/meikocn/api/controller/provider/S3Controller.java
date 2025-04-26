@@ -46,11 +46,8 @@ public class S3Controller implements SecuredRestController {
    */
   @PostMapping("/presigned-request")
   public ResponseEntity<?> getPresignedPutObjectRequest(
-      JwtAuthenticationToken token,
-      @RequestParam String key,
-      @RequestParam String contentType,
-      @RequestParam ObjectCannedACL acl) {
-    PresignedPutObjectRequest request = s3Service.getPresignedUrl(token, key, contentType, acl);
+      JwtAuthenticationToken token, @RequestParam String key, @RequestParam ObjectCannedACL acl) {
+    PresignedPutObjectRequest request = s3Service.getPresignedUrl(token, key, acl);
     PresignedObjectRequestDto dto = s3Mapper.putObjectRequest2Dto(request);
     return ResponseEntity.ok(dto);
   }

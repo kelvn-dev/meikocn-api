@@ -17,7 +17,7 @@
     <java.version>17</java.version>
     <springframework.version>3.2.2</springframework.version>
     <lombok.version>1.18.30</lombok.version>
-    <mapstruct.version>1.5.5.Final</mapstruct.version>
+    <mapstruct.version>1.6.3</mapstruct.version>
     <auth0.version>2.10.0</auth0.version>
     <aws.java.sdk.version>2.24.10</aws.java.sdk.version>
     <querydsl.version>5.1.0</querydsl.version>

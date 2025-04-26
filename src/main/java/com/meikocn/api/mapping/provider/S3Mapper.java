@@ -16,7 +16,12 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 @Mapper(componentModel = "spring")
 public interface S3Mapper {
 
-  List<FileVersionResDto> objectVersions2Dto(List<ObjectVersion> objectVersion);
+  @Mapping(target = "versionId", expression = "java(source.versionId())")
+  @Mapping(target = "lastModified", expression = "java(source.lastModified())")
+  @Mapping(target = "isLatest", expression = "java(source.isLatest())")
+  FileVersionResDto objectVersions2Dto(ObjectVersion source);
+
+  List<FileVersionResDto> objectVersions2Dto(List<ObjectVersion> source);
 
   @Mapping(target = "url", expression = "java( request.url().toString() )")
   @Mapping(target = "signedHeaders", source = "request", qualifiedByName = "signedHeaders")

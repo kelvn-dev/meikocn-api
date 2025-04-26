@@ -6,17 +6,14 @@ import com.meikocn.api.exception.BaseException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectVersionsRequest;
-import software.amazon.awssdk.services.s3.model.ListObjectVersionsResponse;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
-import software.amazon.awssdk.services.s3.model.ObjectVersion;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
@@ -30,17 +27,24 @@ public class S3Service {
   private final AWSPropConfig awsPropConfig;
   private final S3Presigner s3Presigner;
   private final S3Client s3Client;
+  private final Executor s3TaskExecutor;
   private static final int PRESIGNED_URL_TTL_IN_MIN = 10;
 
-  /** For uploading */
+  /**
+   * Presigned url for uploading file
+   *
+   * @param token
+   * @param key
+   * @param acl
+   * @return
+   */
   public PresignedPutObjectRequest getPresignedUrl(
-      JwtAuthenticationToken token, String key, String contentType, ObjectCannedACL acl) {
+      JwtAuthenticationToken token, String key, ObjectCannedACL acl) {
     try {
       PutObjectRequest objectRequest =
           PutObjectRequest.builder()
               .bucket(awsPropConfig.getS3().getBucket())
               .key(String.format("%s/%s", awsPropConfig.getS3().getPrefix(), key))
-              .contentType(contentType)
               .acl(acl)
               .metadata(Map.of("modified-by", token.getToken().getSubject()))
               .build();
@@ -57,17 +61,24 @@ public class S3Service {
     }
   }
 
-  /** For retrieving specific version */
+  /**
+   * Presigned url for retrieving specific version
+   *
+   * @param key
+   * @param versionId
+   * @param contentDisposition
+   * @return
+   */
   public PresignedGetObjectRequest getPresignedUrl(
       String key, String versionId, ContentDisposition contentDisposition) {
     try {
       GetObjectRequest.Builder getObjectRequestBuilder =
           GetObjectRequest.builder()
               .bucket(awsPropConfig.getS3().getBucket())
-              .key(key)
+              .key(String.format("%s/%s", awsPropConfig.getS3().getPrefix(), key))
               .responseContentDisposition(
                   ContentDisposition.ATTACHMENT.equals(contentDisposition)
-                      ? "attachment; filename=\"" + key.concat(".png") + "\""
+                      ? "attachment; filename=\"" + key + "\""
                       : ContentDisposition.INLINE.toString());
 
       if (versionId != null) {
@@ -88,8 +99,13 @@ public class S3Service {
     }
   }
 
-  /** List all versions of a file */
-  public List<ObjectVersion> listFileVersions(String key) {
+  /**
+   * List all versions of a file
+   *
+   * @param key
+   * @return
+   */
+  public List<ObjectVersion> getFileVersions(String key) {
     try {
       ListObjectVersionsRequest request =
           ListObjectVersionsRequest.builder()
@@ -102,5 +118,49 @@ public class S3Service {
     } catch (S3Exception e) {
       throw new BaseException(e.getMessage());
     }
+  }
+
+  /**
+   * Get metadata of an object version
+   *
+   * @param objectVersion
+   * @return
+   */
+  public Map<String, String> getMetadata(ObjectVersion objectVersion) {
+    HeadObjectRequest headRequest =
+        HeadObjectRequest.builder()
+            .bucket(awsPropConfig.getS3().getBucket())
+            .key(objectVersion.key())
+            .versionId(objectVersion.versionId())
+            .build();
+
+    HeadObjectResponse headObjectResponse = s3Client.headObject(headRequest);
+    return headObjectResponse.metadata();
+  }
+
+  /**
+   * Get metadata map of list object version
+   *
+   * @param objectVersions
+   * @return Map<versionId, metadata>
+   */
+  public Map<String, Map<String, String>> getMetadata(List<ObjectVersion> objectVersions) {
+    ConcurrentHashMap<String, Map<String, String>> resultMap = new ConcurrentHashMap<>();
+
+    List<CompletableFuture<Void>> futures =
+        objectVersions.stream()
+            .map(
+                objectVersion ->
+                    CompletableFuture.runAsync(
+                        () -> {
+                          Map<String, String> metadata = this.getMetadata(objectVersion);
+                          resultMap.put(objectVersion.versionId(), metadata);
+                        },
+                        s3TaskExecutor))
+            .toList();
+
+    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+    return resultMap;
   }
 }

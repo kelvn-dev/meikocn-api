@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "async")
 public class ThreadPoolConfig {
   private ThreadPool generalThreadPool;
+  private ThreadPool s3ThreadPool;
 
   @Getter
   @Setter

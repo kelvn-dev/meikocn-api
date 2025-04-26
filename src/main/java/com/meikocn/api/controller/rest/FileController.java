@@ -1,53 +1,71 @@
 package com.meikocn.api.controller.rest;
 
 import com.meikocn.api.controller.SecuredRestController;
-import com.meikocn.api.dto.rest.response.FileVersionResDto;
-import com.meikocn.api.mapping.provider.S3Mapper;
-import com.meikocn.api.service.provider.S3Service;
+import com.meikocn.api.dto.rest.request.FileReqDto;
+import com.meikocn.api.mapping.rest.FileMapper;
+import com.meikocn.api.model.File;
+import com.meikocn.api.service.rest.FileService;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import software.amazon.awssdk.services.s3.model.ObjectVersion;
 
 @RestController
 @RequestMapping("/v1/files")
 @RequiredArgsConstructor
 public class FileController implements SecuredRestController {
 
-  private final S3Service s3Service;
-  private final S3Mapper s3Mapper;
+  private final FileService fileService;
+  private final FileMapper fileMapper;
+
+  @PostMapping
+  @PreAuthorize("hasAuthority('write:files')")
+  public ResponseEntity<?> create(@Valid @RequestBody FileReqDto dto) {
+    fileService.create(dto);
+    return ResponseEntity.ok(null);
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getById(@PathVariable UUID id) {
+    File file = fileService.getById(id, false);
+    return ResponseEntity.ok(fileMapper.model2Dto(file));
+  }
+
+  @GetMapping("/versions")
+  @PreAuthorize("hasAuthority('read:files')")
+  public ResponseEntity<?> getFileVersions(@RequestParam String key) {
+    return ResponseEntity.ok(fileService.getFileVersions(key));
+  }
+
+  @PutMapping("/{id}")
+  @PreAuthorize("hasAuthority('write:files')")
+  public ResponseEntity<?> updateById(@Valid @RequestBody FileReqDto dto, @PathVariable UUID id) {
+    fileService.updateById(id, dto);
+    return ResponseEntity.ok(null);
+  }
+
+  @DeleteMapping("/{id}")
+  @PreAuthorize("hasAuthority('delete:files')")
+  public ResponseEntity<?> deleteById(@PathVariable UUID id) {
+    fileService.deleteById(id);
+    return ResponseEntity.ok(null);
+  }
 
   @GetMapping
-  @PreAuthorize("hasAuthority('read:files')")
-  public ResponseEntity<?> listFileVersions(@RequestParam String key) {
-    List<ObjectVersion> objectVersions = s3Service.listFileVersions(key);
-    List<FileVersionResDto> fileVersionResDtos =
-        objectVersions.stream()
-            .map(
-                version -> {
-                  // TODO: move this to mapstruct + solution to get metadata of all version in 1
-                  // search for modified-by
-                  // Get metadata for each version
-                  //                                HeadObjectRequest headRequest =
-                  // HeadObjectRequest.builder()
-                  //                      .bucket(awsPropConfig.getS3().getBucket())
-                  //                      .key(version.key())
-                  //                      .versionId(version.versionId())
-                  //                      .build();
-
-                  //              HeadObjectResponse headResponse =
-                  // s3Client.headObject(headRequest);
-                  //              Map<String, String> metadata = headResponse.metadata();
-                  FileVersionResDto fileVersionResDto = new FileVersionResDto();
-                  fileVersionResDto.setVersionId(version.versionId());
-                  fileVersionResDto.setLastModified(version.lastModified());
-                  fileVersionResDto.setIsLatest(version.isLatest());
-                  return fileVersionResDto;
-                })
-            .collect(Collectors.toList());
-    return ResponseEntity.ok(fileVersionResDtos);
+  public ResponseEntity<?> getList(
+      @PageableDefault(
+              sort = {"createdAt"},
+              direction = Sort.Direction.DESC)
+          @ParameterObject
+          Pageable pageable,
+      @RequestParam(required = false, defaultValue = "") List<String> filter) {
+    return ResponseEntity.ok(fileMapper.model2Dto(fileService.getList(filter, pageable)));
   }
 }

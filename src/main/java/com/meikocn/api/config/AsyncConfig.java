@@ -14,7 +14,12 @@ public class AsyncConfig {
 
   @Bean
   public Executor generalTaskExecutor() {
-    return createExecutor("general-upload-async", threadPoolConfig.getGeneralThreadPool());
+    return createExecutor("general-async", threadPoolConfig.getGeneralThreadPool());
+  }
+
+  @Bean
+  public Executor s3TaskExecutor() {
+    return createExecutor("s3-async", threadPoolConfig.getS3ThreadPool());
   }
 
   private static Executor createExecutor(
