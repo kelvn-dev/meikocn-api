@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 @RestController
 @RequestMapping("/v1/s3")
 @RequiredArgsConstructor
-@PreAuthorize("hasAuthority('manage:s3')")
+@PreAuthorize("hasAuthority('write:files')")
 public class S3Controller implements SecuredRestController {
 
   private final S3Service s3Service;
