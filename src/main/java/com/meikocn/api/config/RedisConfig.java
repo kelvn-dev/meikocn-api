@@ -3,6 +3,7 @@ package com.meikocn.api.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -16,6 +17,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
+
+  private static final int DEFAULT_CACHE_TTL_IN_MIN = 10;
 
   @Bean
   public RedisTemplate<String, Object> redisTemplate(
@@ -41,6 +44,7 @@ public class RedisConfig {
         RedisCacheWriter.nonLockingRedisCacheWriter(redisTemplate.getConnectionFactory());
     RedisCacheConfiguration redisCacheConfiguration =
         RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(DEFAULT_CACHE_TTL_IN_MIN))
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
                     redisTemplate.getValueSerializer()));
