@@ -2,6 +2,7 @@ package com.meikocn.api.dto.rest.response;
 
 import com.meikocn.api.enums.TaskPriority;
 import com.meikocn.api.enums.TaskStatus;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
 
@@ -18,4 +19,5 @@ public class TaskResDto {
   private UserResDto assignee;
   private UUID projectId;
   private ProjectResDto project;
+  private Set<CommentResDto> comments;
 }

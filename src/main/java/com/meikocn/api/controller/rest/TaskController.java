@@ -4,6 +4,7 @@ import com.meikocn.api.controller.SecuredRestController;
 import com.meikocn.api.dto.rest.request.TaskReqDto;
 import com.meikocn.api.mapping.rest.TaskMapper;
 import com.meikocn.api.model.Task;
+import com.meikocn.api.model.TaskEntityGraph;
 import com.meikocn.api.service.rest.TaskService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -34,7 +35,9 @@ public class TaskController implements SecuredRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getById(@PathVariable UUID id) {
-    Task task = taskService.getById(id, false);
+    TaskEntityGraph entityGraph =
+        TaskEntityGraph.____().assignee().____.project().____.comments().____.____();
+    Task task = taskService.getById(id, entityGraph, false);
     return ResponseEntity.ok(taskMapper.model2Dto(task));
   }
 
@@ -60,6 +63,9 @@ public class TaskController implements SecuredRestController {
           @ParameterObject
           Pageable pageable,
       @RequestParam(required = false, defaultValue = "") List<String> filter) {
-    return ResponseEntity.ok(taskMapper.model2Dto(taskService.getList(filter, pageable)));
+    TaskEntityGraph entityGraph =
+        TaskEntityGraph.____().assignee().____.project().____.comments().____.____();
+    return ResponseEntity.ok(
+        taskMapper.model2Dto(taskService.getList(filter, pageable, entityGraph)));
   }
 }

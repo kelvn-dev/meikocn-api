@@ -1,9 +1,11 @@
 package com.meikocn.api.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.meikocn.api.enums.TaskPriority;
 import com.meikocn.api.enums.TaskStatus;
 import jakarta.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -53,4 +55,8 @@ public class Task extends BaseModel {
   @JoinColumn(name = "project_id", insertable = false, updatable = false)
   @JsonBackReference
   private Project project;
+
+  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private Set<Comment> comments;
 }

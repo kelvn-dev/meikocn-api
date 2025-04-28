@@ -57,4 +57,10 @@ public abstract class BaseService<M extends BaseModel, R extends BaseRepository<
     BooleanExpression expression = PredicateUtils.getBooleanExpression(criteria, modelClass);
     return repository.findAll(expression, pageable);
   }
+
+  public Page<M> getList(List<String> filter, Pageable pageable, EntityGraph entityGraph) {
+    List<SearchCriteria> criteria = HelperUtils.formatSearchCriteria(filter);
+    BooleanExpression expression = PredicateUtils.getBooleanExpression(criteria, modelClass);
+    return repository.findAll(expression, pageable, entityGraph);
+  }
 }
