@@ -29,7 +29,6 @@ public class File extends BaseModel {
   @Enumerated(EnumType.STRING)
   private ObjectCannedACL acl;
 
-  @Lob
-  @Column(name = "description")
+  @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 }

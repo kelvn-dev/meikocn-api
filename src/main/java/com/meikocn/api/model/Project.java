@@ -1,6 +1,8 @@
 package com.meikocn.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +20,10 @@ public class Project extends BaseModel {
   @Column(name = "name", nullable = false)
   private String name;
 
-  @Lob
-  @Column(name = "description")
+  @Column(name = "description", columnDefinition = "TEXT")
   private String description;
+
+  @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+  @JsonManagedReference
+  private Set<Task> tasks;
 }
