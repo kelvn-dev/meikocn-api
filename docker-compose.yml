@@ -30,9 +30,11 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+      - "61613:61613"
     environment:
       RABBITMQ_DEFAULT_USER: meikocn
       RABBITMQ_DEFAULT_PASS: meikocn
+    command: bash -c "rabbitmq-plugins enable --offline rabbitmq_stomp && rabbitmq-server"
     volumes:
       - ./volumes/rabbitmq/data/:/var/lib/rabbitmq/
       - ./volumes/rabbitmq/log/:/var/log/rabbitmq
@@ -40,7 +42,7 @@ services:
       - meikocn-network
 #  api:
 #    container_name: meikocn-api
-#    image: kelvn/meikocn-api:sha-6e683ba
+#    image: kelvn/meikocn-api:sha-9797844
 ##    build:
 ##      context: .
 ##      dockerfile: Dockerfile

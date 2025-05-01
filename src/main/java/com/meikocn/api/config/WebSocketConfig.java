@@ -16,6 +16,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Inject private AuthChannelInterceptor authChannelInterceptor;
+  @Inject private RabbitMQPropConfig rabbitMQPropConfig;
 
   @Override
   public void configureClientInboundChannel(ChannelRegistration registration) {
@@ -25,7 +26,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry config) {
-    config.enableSimpleBroker("/users");
+    config
+        .enableStompBrokerRelay("/queue")
+        .setRelayHost(rabbitMQPropConfig.getHost())
+        .setRelayPort(rabbitMQPropConfig.getStompPort())
+        .setSystemLogin(rabbitMQPropConfig.getUsername())
+        .setSystemPasscode(rabbitMQPropConfig.getPassword())
+        .setClientLogin(rabbitMQPropConfig.getUsername())
+        .setClientPasscode(rabbitMQPropConfig.getPassword());
   }
 
   @Override

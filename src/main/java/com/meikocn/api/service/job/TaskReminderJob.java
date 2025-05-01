@@ -36,6 +36,7 @@ public class TaskReminderJob implements Job {
 
     log.info("Sending reminder to user {} about task {}", userId, taskId);
     simpMessagingTemplate.convertAndSend(
-        String.format("/users/%s/task-reminders", userId), taskMapper.model2ReminderDto(task));
+        String.format("/queue/users.%s.task-reminders", userId),
+        taskMapper.model2ReminderDto(task));
   }
 }
