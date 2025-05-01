@@ -1,7 +1,7 @@
 package com.meikocn.api.config;
 
-import com.meikocn.api.converter.AclConverter;
-import com.meikocn.api.converter.ContentDispositionConverter;
+import com.meikocn.api.component.converter.AclConverter;
+import com.meikocn.api.component.converter.ContentDispositionConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

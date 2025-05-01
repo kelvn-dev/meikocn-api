@@ -1,4 +1,4 @@
-package com.meikocn.api.service.listener;
+package com.meikocn.api.service.consumer;
 
 import com.meikocn.api.model.User;
 import lombok.extern.slf4j.Slf4j;

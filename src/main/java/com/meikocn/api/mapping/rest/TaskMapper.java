@@ -2,6 +2,7 @@ package com.meikocn.api.mapping.rest;
 
 import com.meikocn.api.dto.rest.request.TaskReqDto;
 import com.meikocn.api.dto.rest.response.PageResDto;
+import com.meikocn.api.dto.rest.response.TaskReminderResDto;
 import com.meikocn.api.dto.rest.response.TaskResDto;
 import com.meikocn.api.model.Task;
 import org.mapstruct.Mapper;
@@ -17,6 +18,8 @@ public interface TaskMapper {
   Task dto2Model(TaskReqDto dto);
 
   TaskResDto model2Dto(Task model);
+
+  TaskReminderResDto model2ReminderDto(Task model);
 
   void updateModelFromDto(TaskReqDto dto, @MappingTarget Task model);
 

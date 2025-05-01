@@ -1,4 +1,4 @@
-package com.meikocn.api.converter;
+package com.meikocn.api.component.converter;
 
 import com.meikocn.api.enums.ContentDisposition;
 import com.meikocn.api.exception.BadRequestException;
