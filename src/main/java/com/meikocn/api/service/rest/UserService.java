@@ -68,11 +68,15 @@ public class UserService {
 
   public User getProfile(JwtAuthenticationToken jwtToken) {
     String userId = jwtToken.getToken().getSubject();
-    return this.getById(userId, false);
+    User user = this.getById(userId, true);
+    if (Objects.isNull(user)) {
+      return this.createInternalUserFromAuth0User(userId);
+    }
+    return user;
   }
 
   /**
-   * Use this service for normal signup flow
+   * Use this service for normal signup flow or local db
    *
    * @param userId
    * @return
