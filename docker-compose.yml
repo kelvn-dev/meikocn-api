@@ -42,10 +42,10 @@ services:
       - meikocn-network
 #  api:
 #    container_name: meikocn-api
-#    image: kelvn/meikocn-api:sha-9797844
-##    build:
-##      context: .
-##      dockerfile: Dockerfile
+#    image: kelvn/meikocn-api:sha-f72fc65
+#  #    build:
+#  #      context: .
+#  #      dockerfile: Dockerfile
 #    ports:
 #      - "8080:8080"
 #    networks:

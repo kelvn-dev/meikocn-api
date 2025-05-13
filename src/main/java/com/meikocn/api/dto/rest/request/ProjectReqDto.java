@@ -7,4 +7,6 @@ import lombok.Data;
 public class ProjectReqDto {
   @NotBlank private String name;
   private String description;
+  private Long startDate;
+  private Long endDate;
 }

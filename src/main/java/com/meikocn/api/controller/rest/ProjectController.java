@@ -4,12 +4,14 @@ import com.meikocn.api.controller.SecuredRestController;
 import com.meikocn.api.dto.rest.request.ProjectReqDto;
 import com.meikocn.api.mapping.rest.ProjectMapper;
 import com.meikocn.api.model.Project;
+import com.meikocn.api.model.ProjectEntityGraph;
 import com.meikocn.api.service.rest.ProjectService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -34,8 +36,9 @@ public class ProjectController implements SecuredRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getById(@PathVariable UUID id) {
-    Project project = projectService.getById(id, false);
-    return ResponseEntity.ok(projectMapper.model2Dto(project));
+    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.____();
+    Project project = projectService.getById(id, entityGraph, false);
+    return ResponseEntity.ok(projectService.mapTaskData(project));
   }
 
   @PutMapping("/{id}")
@@ -61,6 +64,8 @@ public class ProjectController implements SecuredRestController {
           @ParameterObject
           Pageable pageable,
       @RequestParam(required = false, defaultValue = "") List<String> filter) {
-    return ResponseEntity.ok(projectMapper.model2Dto(projectService.getList(filter, pageable)));
+    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.____();
+    Page<Project> projectPage = projectService.getList(filter, pageable, entityGraph);
+    return ResponseEntity.ok(projectService.mapTaskData(projectPage));
   }
 }

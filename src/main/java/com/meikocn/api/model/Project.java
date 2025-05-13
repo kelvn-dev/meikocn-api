@@ -23,6 +23,12 @@ public class Project extends BaseModel {
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
+  @Column(name = "start_date")
+  private Long startDate;
+
+  @Column(name = "end_date")
+  private Long endDate;
+
   @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
   @JsonManagedReference
   private Set<Task> tasks;
