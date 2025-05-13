@@ -50,12 +50,15 @@ public class ProjectService extends BaseService<Project, ProjectRepository> {
     int taskCount = tasks.size();
     int doneTaskCount =
         (int) tasks.stream().filter(t -> t.getStatus().equals(TaskStatus.DONE)).count();
-    int progress = (int) (((float) doneTaskCount / taskCount) * 100);
+
+    int progress = 0;
+    if (taskCount != 0) {
+      progress = (int) (((float) doneTaskCount / taskCount) * 100);
+    }
 
     ProjectResDto dto = projectMapper.model2Dto(project);
     dto.setTaskCount(taskCount);
     dto.setDoneTaskCount(doneTaskCount);
-    dto.setProgress(doneTaskCount / taskCount * 100);
     dto.setProgress(progress);
     return dto;
   }
