@@ -24,7 +24,7 @@ public class TaskScheduler {
 
     JobDetail jobDetail =
         JobBuilder.newJob(TaskReminderJob.class)
-            .withIdentity(TASK_REMINDER_JOB_ID + task)
+            .withIdentity(TASK_REMINDER_JOB_ID + taskId)
             .usingJobData("taskId", taskId)
             .usingJobData("userId", userId)
             .build();

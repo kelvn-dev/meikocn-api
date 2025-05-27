@@ -93,32 +93,37 @@ public class Auth0Service {
 
   @CacheEvict(cacheNames = "userPermissionCache", key = "#userId")
   public void updatePermissionsByUserId(String userId, List<String> toAdd, List<String> toRemove) {
-    List<Permission> permissionsToAdd =
-        toAdd.stream()
-            .map(
-                p -> {
-                  Permission permission = new Permission();
-                  permission.setName(p);
-                  permission.setResourceServerId(auth0Config.getApiIdentifier());
-                  return permission;
-                })
-            .toList();
+    if (!toAdd.isEmpty()) {
+      List<Permission> permissionsToAdd =
+          toAdd.stream()
+              .map(
+                  p -> {
+                    Permission permission = new Permission();
+                    permission.setName(p);
+                    permission.setResourceServerId(auth0Config.getApiIdentifier());
+                    return permission;
+                  })
+              .toList();
+      Request<Void> addRequest = managementAPI.users().addPermissions(userId, permissionsToAdd);
+      executeRequest(addRequest);
+    }
 
-    List<Permission> permissionsToRemove =
-        toRemove.stream()
-            .map(
-                p -> {
-                  Permission permission = new Permission();
-                  permission.setName(p);
-                  permission.setResourceServerId(auth0Config.getApiIdentifier());
-                  return permission;
-                })
-            .toList();
-    Request<Void> addRequest = managementAPI.users().addPermissions(userId, permissionsToAdd);
-    Request<Void> removeRequest =
-        managementAPI.users().removePermissions(userId, permissionsToRemove);
-    executeRequest(addRequest);
-    executeRequest(removeRequest);
+    if (!toRemove.isEmpty()) {
+      List<Permission> permissionsToRemove =
+          toRemove.stream()
+              .map(
+                  p -> {
+                    Permission permission = new Permission();
+                    permission.setName(p);
+                    permission.setResourceServerId(auth0Config.getApiIdentifier());
+                    return permission;
+                  })
+              .toList();
+
+      Request<Void> removeRequest =
+          managementAPI.users().removePermissions(userId, permissionsToRemove);
+      executeRequest(removeRequest);
+    }
   }
 
   @CacheEvict(cacheNames = "userPermissionCache", key = "#userId")
