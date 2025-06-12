@@ -56,7 +56,7 @@ public class Task extends BaseModel {
   @JsonBackReference
   private Project project;
 
-  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, orphanRemoval = true)
   @JsonManagedReference
   private Set<Comment> comments;
 }

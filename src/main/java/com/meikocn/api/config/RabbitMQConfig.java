@@ -70,7 +70,7 @@ public class RabbitMQConfig {
   @Bean
   public Declarables createAccountInvitationSchema() {
     return new Declarables(
-        new FanoutExchange("x.user-invitation"),
+        new DirectExchange("x.user-invitation"),
         QueueBuilder.durable("q.confirmation-invitation-email")
             .deadLetterExchange("x.user-invitation-failure")
             .deadLetterRoutingKey("fallback-confirmation-invitation-email")

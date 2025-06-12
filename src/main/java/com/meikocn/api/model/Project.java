@@ -29,7 +29,7 @@ public class Project extends BaseModel {
   @Column(name = "end_date")
   private Long endDate;
 
-  @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, orphanRemoval = true)
   @JsonManagedReference
   private Set<Task> tasks;
 }
