@@ -1,5 +1,6 @@
 package com.meikocn.api.dto.rest.response;
 
+import java.util.Set;
 import java.util.UUID;
 import lombok.Data;
 
@@ -13,4 +14,5 @@ public class ProjectResDto {
   private Integer progress;
   private Integer taskCount;
   private Integer doneTaskCount;
+  private Set<String> userIds;
 }

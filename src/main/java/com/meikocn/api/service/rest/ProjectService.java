@@ -9,10 +9,8 @@ import com.meikocn.api.mapping.rest.ProjectMapper;
 import com.meikocn.api.model.Project;
 import com.meikocn.api.model.Task;
 import com.meikocn.api.repository.ProjectRepository;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -48,18 +46,27 @@ public class ProjectService extends BaseService<Project, ProjectRepository> {
   public ProjectResDto mapTaskData(Project project) {
     Set<Task> tasks = project.getTasks();
     int taskCount = tasks.size();
-    int doneTaskCount =
-        (int) tasks.stream().filter(t -> t.getStatus().equals(TaskStatus.DONE)).count();
+    AtomicInteger doneTaskCount = new AtomicInteger();
+    Set<String> userIds = new HashSet<>();
+
+    tasks.forEach(
+        task -> {
+          if (task.getStatus().equals(TaskStatus.DONE)) {
+            doneTaskCount.incrementAndGet();
+          }
+          userIds.add(task.getAssigneeId());
+        });
 
     int progress = 0;
     if (taskCount != 0) {
-      progress = (int) (((float) doneTaskCount / taskCount) * 100);
+      progress = (int) (((float) doneTaskCount.get() / taskCount) * 100);
     }
 
     ProjectResDto dto = projectMapper.model2Dto(project);
     dto.setTaskCount(taskCount);
-    dto.setDoneTaskCount(doneTaskCount);
+    dto.setDoneTaskCount(doneTaskCount.get());
     dto.setProgress(progress);
+    dto.setUserIds(userIds);
     return dto;
   }
 
