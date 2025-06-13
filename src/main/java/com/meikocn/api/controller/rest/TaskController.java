@@ -64,7 +64,7 @@ public class TaskController implements SecuredRestController {
           Pageable pageable,
       @RequestParam(required = false, defaultValue = "") List<String> filter) {
     TaskEntityGraph entityGraph =
-        TaskEntityGraph.____().assignee().____.project().____.comments().____.____();
+        TaskEntityGraph.____().assignee().____.project().____.comments().____.files().____.____();
     return ResponseEntity.ok(
         taskMapper.model2Dto(taskService.getList(filter, pageable, entityGraph)));
   }
