@@ -1,6 +1,8 @@
 package com.meikocn.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,4 +33,12 @@ public class File extends BaseModel {
 
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
+
+  @Column(name = "task_id", columnDefinition = "uuid")
+  private UUID taskId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "task_id", insertable = false, updatable = false)
+  @JsonBackReference
+  private Task task;
 }

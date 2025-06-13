@@ -20,4 +20,5 @@ public class TaskResDto {
   private UUID projectId;
   private ProjectResDto project;
   private Set<CommentResDto> comments;
+  private Set<FileResDto> files;
 }

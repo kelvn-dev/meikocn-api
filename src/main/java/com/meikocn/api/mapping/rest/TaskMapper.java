@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 
 @Mapper(
     componentModel = "spring",
-    uses = {UserMapper.class, ProjectMapper.class, CommentMapper.class})
+    uses = {UserMapper.class, ProjectMapper.class, CommentMapper.class, FileMapper.class})
 public interface TaskMapper {
 
   Task dto2Model(TaskReqDto dto);

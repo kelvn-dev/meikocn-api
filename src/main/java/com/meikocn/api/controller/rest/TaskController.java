@@ -36,7 +36,7 @@ public class TaskController implements SecuredRestController {
   @GetMapping("/{id}")
   public ResponseEntity<?> getById(@PathVariable UUID id) {
     TaskEntityGraph entityGraph =
-        TaskEntityGraph.____().assignee().____.project().____.comments().____.____();
+        TaskEntityGraph.____().assignee().____.project().____.comments().____.files().____.____();
     Task task = taskService.getById(id, entityGraph, false);
     return ResponseEntity.ok(taskMapper.model2Dto(task));
   }

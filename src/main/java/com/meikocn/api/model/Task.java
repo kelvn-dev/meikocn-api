@@ -59,4 +59,8 @@ public class Task extends BaseModel {
   @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, orphanRemoval = true)
   @JsonManagedReference
   private Set<Comment> comments;
+
+  @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, orphanRemoval = true)
+  @JsonManagedReference
+  private Set<File> files;
 }
