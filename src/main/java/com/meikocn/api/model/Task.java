@@ -1,6 +1,6 @@
 package com.meikocn.api.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.meikocn.api.enums.TaskPriority;
 import com.meikocn.api.enums.TaskStatus;
@@ -53,7 +53,7 @@ public class Task extends BaseModel {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", insertable = false, updatable = false)
-  @JsonBackReference
+  @JsonIgnoreProperties("tasks")
   private Project project;
 
   @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, orphanRemoval = true)

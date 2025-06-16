@@ -10,4 +10,5 @@ import org.springframework.context.annotation.Configuration;
 public class ClientConfig {
   private String baseUrl;
   private String accountResetUrl;
+  private String taskDetailUrl;
 }

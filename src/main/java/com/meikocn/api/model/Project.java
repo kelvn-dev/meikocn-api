@@ -1,6 +1,6 @@
 package com.meikocn.api.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -30,6 +30,6 @@ public class Project extends BaseModel {
   private Long endDate;
 
   @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, orphanRemoval = true)
-  @JsonManagedReference
+  @JsonIgnoreProperties("project")
   private Set<Task> tasks;
 }

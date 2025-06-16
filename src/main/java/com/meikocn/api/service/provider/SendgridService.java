@@ -3,6 +3,7 @@ package com.meikocn.api.service.provider;
 import com.meikocn.api.config.ClientConfig;
 import com.meikocn.api.config.SendgridConfig;
 import com.meikocn.api.enums.SendGridTemplate;
+import com.meikocn.api.model.Task;
 import com.meikocn.api.model.User;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
@@ -26,10 +27,11 @@ public class SendgridService {
   private final SendgridConfig sendgridConfig;
   private final ClientConfig clientConfig;
   private final SendGrid sendGrid;
+  private static final String sendgridDateFormat = "dddd, MMMM DD, YYYY";
 
   @SneakyThrows
   public void send(
-      String emailTo, SendGridTemplate sendGridTemplate, Map<String, String> templateData) {
+      String emailTo, SendGridTemplate sendGridTemplate, Map<String, Object> templateData) {
     // Use Single Sender Verification configured in setting
     Email sender = new Email(sendgridConfig.getEmailSender());
     Email receiver = new Email(emailTo);
@@ -62,7 +64,7 @@ public class SendgridService {
   }
 
   public void sendConfirmationInvitationEmail(User user) {
-    Map<String, String> templateData = new HashMap<>();
+    Map<String, Object> templateData = new HashMap<>();
     templateData.put("name", user.getNickname());
     templateData.put("subject", "Invitation from Admin portal");
     templateData.put("dealer", "Admin portal");
@@ -71,4 +73,18 @@ public class SendgridService {
         String.format("%s/%s", clientConfig.getAccountResetUrl(), user.getInviteToken()));
     send(user.getEmail(), SendGridTemplate.INVITATION_TEMPLATE, templateData);
   }
+
+  public void sendTaskReminderEmail(Task task, User user) {
+    Map<String, Object> templateData = new HashMap<>();
+    templateData.put("user", user.getNickname());
+    templateData.put("project", task.getProject().getName());
+    templateData.put("task", task.getName());
+    templateData.put("date", task.getEndDate());
+    templateData.put("dateFormat", sendgridDateFormat);
+    templateData.put("priority", task.getPriority().toString());
+    templateData.put(
+        "link", String.format("%s/%s", clientConfig.getTaskDetailUrl(), task.getId().toString()));
+    send(user.getEmail(), SendGridTemplate.TASK_REMINDER_TEMPLATE, templateData);
+  }
 }
+// Tuesday, June 18, 2025

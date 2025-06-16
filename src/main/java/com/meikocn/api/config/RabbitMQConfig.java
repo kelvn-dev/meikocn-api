@@ -18,6 +18,21 @@ import org.springframework.retry.interceptor.RetryOperationsInterceptor;
 @RequiredArgsConstructor
 public class RabbitMQConfig {
   private final CachingConnectionFactory cachingConnectionFactory;
+  public static final String USER_INVITATION_EXCHANGE = "x.user-invitation";
+  public static final String CONFIRMMATION_INVITATION_QUEUE = "q.confirmation-invitation-email";
+  public static final String CONFIRMMATION_INVITATION_ROUTINGKEY = "confirmation-invitation-email";
+  public static final String USER_INVITATION_FALLBACK_EXCHANGE = "x.user-invitation-failure";
+  public static final String CONFIRMMATION_INVITATION_FALLBACK_QUEUE =
+      "q.fallback-confirmation-invitation-email";
+  public static final String CONFIRMMATION_INVITATION_FALLBACK_ROUTINGKEY =
+      "fallback-confirmation-invitation-email";
+
+  public static final String TASK_REMINDER_EXCHANGE = "x.task-reminder";
+  public static final String TASK_REMINDER_QUEUE = "q.task-reminder-email";
+  public static final String TASK_REMINDER_ROUTINGKEY = "task-reminder-email";
+  public static final String TASK_REMINDER_FALLBACK_EXCHANGE = "x.task-reminder-failure";
+  public static final String TASK_REMINDER_FALLBACK_QUEUE = "q.fallback-task-reminder-email";
+  public static final String TASK_REMINDER_FALLBACK_ROUTINGKEY = "fallback-task-reminder-email";
 
   @Bean
   public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
@@ -57,32 +72,61 @@ public class RabbitMQConfig {
   @Bean
   public Declarables createDeadLetterAccountInvitationSchema() {
     return new Declarables(
-        new DirectExchange("x.user-invitation-failure"),
-        new Queue("q.fallback-confirmation-invitation-email"),
+        new DirectExchange(USER_INVITATION_FALLBACK_EXCHANGE),
+        new Queue(CONFIRMMATION_INVITATION_FALLBACK_QUEUE),
         new Binding(
-            "q.fallback-confirmation-invitation-email",
+            CONFIRMMATION_INVITATION_FALLBACK_QUEUE,
             Binding.DestinationType.QUEUE,
-            "x.user-invitation-failure",
-            "fallback-confirmation-invitation-email",
+            USER_INVITATION_FALLBACK_EXCHANGE,
+            CONFIRMMATION_INVITATION_FALLBACK_ROUTINGKEY,
             null));
   }
 
   @Bean
   public Declarables createAccountInvitationSchema() {
     return new Declarables(
-        new DirectExchange("x.user-invitation"),
-        QueueBuilder.durable("q.confirmation-invitation-email")
-            .deadLetterExchange("x.user-invitation-failure")
-            .deadLetterRoutingKey("fallback-confirmation-invitation-email")
+        new DirectExchange(USER_INVITATION_EXCHANGE),
+        QueueBuilder.durable(CONFIRMMATION_INVITATION_QUEUE)
+            .deadLetterExchange(USER_INVITATION_FALLBACK_EXCHANGE)
+            .deadLetterRoutingKey(CONFIRMMATION_INVITATION_FALLBACK_ROUTINGKEY)
             .build(),
         // new Queue(...),
         new Binding(
-            "q.confirmation-invitation-email",
+            CONFIRMMATION_INVITATION_QUEUE,
             Binding.DestinationType.QUEUE,
-            "x.user-invitation",
-            "confirmation-invitation-email",
+            USER_INVITATION_EXCHANGE,
+            CONFIRMMATION_INVITATION_ROUTINGKEY,
             null)
         // new Binding(...)
         );
+  }
+
+  @Bean
+  public Declarables createDeadLetterTaskReminderSchema() {
+    return new Declarables(
+        new DirectExchange(TASK_REMINDER_FALLBACK_EXCHANGE),
+        new Queue(TASK_REMINDER_FALLBACK_QUEUE),
+        new Binding(
+            TASK_REMINDER_FALLBACK_QUEUE,
+            Binding.DestinationType.QUEUE,
+            TASK_REMINDER_FALLBACK_EXCHANGE,
+            TASK_REMINDER_FALLBACK_ROUTINGKEY,
+            null));
+  }
+
+  @Bean
+  public Declarables createTaskReminderSchema() {
+    return new Declarables(
+        new DirectExchange(TASK_REMINDER_EXCHANGE),
+        QueueBuilder.durable(TASK_REMINDER_QUEUE)
+            .deadLetterExchange(TASK_REMINDER_FALLBACK_EXCHANGE)
+            .deadLetterRoutingKey(TASK_REMINDER_FALLBACK_ROUTINGKEY)
+            .build(),
+        new Binding(
+            TASK_REMINDER_QUEUE,
+            Binding.DestinationType.QUEUE,
+            TASK_REMINDER_EXCHANGE,
+            TASK_REMINDER_ROUTINGKEY,
+            null));
   }
 }

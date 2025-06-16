@@ -1,6 +1,7 @@
 package com.meikocn.api.controller.rest;
 
 import com.auth0.json.mgmt.permissions.Permission;
+import com.meikocn.api.config.RabbitMQConfig;
 import com.meikocn.api.controller.SecuredRestController;
 import com.meikocn.api.dto.rest.request.PasswordReqDto;
 import com.meikocn.api.dto.rest.request.ProfileReqDto;
@@ -36,7 +37,10 @@ public class UserController implements SecuredRestController {
   @PreAuthorize("hasAuthority('write:users')")
   public ResponseEntity<?> invite(@Valid @RequestBody UserReqDto reqDto) {
     User user = userService.invite(reqDto);
-    rabbitTemplate.convertAndSend("x.user-invitation", "", user);
+    rabbitTemplate.convertAndSend(
+        RabbitMQConfig.USER_INVITATION_EXCHANGE,
+        RabbitMQConfig.CONFIRMMATION_INVITATION_ROUTINGKEY,
+        user);
     return ResponseEntity.ok(null);
   }
 

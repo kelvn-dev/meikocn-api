@@ -1,7 +1,7 @@
 package com.meikocn.api.service.consumer;
 
 import com.meikocn.api.config.RabbitMQConfig;
-import com.meikocn.api.model.User;
+import com.meikocn.api.model.Task;
 import com.meikocn.api.service.provider.SendgridService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +11,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ConfirmationService {
+public class TaskReminderService {
   private final SendgridService sendgridService;
 
-  @RabbitListener(queues = RabbitMQConfig.CONFIRMMATION_INVITATION_QUEUE)
-  private void sendEmail(User user) {
-    sendgridService.sendConfirmationInvitationEmail(user);
-    log.info("Sent email to {}", user.getEmail());
+  @RabbitListener(queues = RabbitMQConfig.TASK_REMINDER_QUEUE)
+  private void sendEmail(Task task) {
+    sendgridService.sendTaskReminderEmail(task, task.getAssignee());
+    log.info("Sent email to {}", task.getAssignee().getEmail());
   }
 
-  // TODO: Implement service to send confirmation SMS
+  // TODO: Implement service to send task reminder SMS
   private void sendSms() {}
 }

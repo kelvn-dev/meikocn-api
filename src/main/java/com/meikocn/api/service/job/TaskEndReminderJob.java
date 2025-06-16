@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Transactional
-public class TaskReminderJob implements Job {
+public class TaskEndReminderJob implements Job {
 
   private final SimpMessagingTemplate simpMessagingTemplate;
   private final TaskService taskService;
@@ -34,7 +34,7 @@ public class TaskReminderJob implements Job {
     TaskEntityGraph entityGraph = TaskEntityGraph.____().project().____.____();
     Task task = taskService.getById(UUID.fromString(taskId), entityGraph, false);
 
-    log.info("Sending reminder to user {} about task {}", userId, taskId);
+    log.info("Sending end reminder to user {} about task {}", userId, taskId);
     simpMessagingTemplate.convertAndSend(
         String.format("/queue/users.%s.task-reminders", userId),
         taskMapper.model2ReminderDto(task));
