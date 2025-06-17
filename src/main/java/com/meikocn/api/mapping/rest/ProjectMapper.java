@@ -9,7 +9,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.data.domain.Page;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+    componentModel = "spring",
+    uses = {UserMapper.class})
 public interface ProjectMapper {
 
   Project dto2Model(ProjectReqDto dto);

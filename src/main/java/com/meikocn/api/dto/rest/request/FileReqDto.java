@@ -10,6 +10,7 @@ public class FileReqDto {
   @NotBlank private String key;
   @NotBlank private String url;
   private UUID taskId;
+  private UUID projectId;
   private String contentType;
   private ObjectCannedACL acl;
   private String description;

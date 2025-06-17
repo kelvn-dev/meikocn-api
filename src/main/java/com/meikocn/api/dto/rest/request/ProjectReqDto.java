@@ -9,4 +9,5 @@ public class ProjectReqDto {
   private String description;
   private Long startDate;
   private Long endDate;
+  private String managerId;
 }

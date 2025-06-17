@@ -34,6 +34,9 @@ public class File extends BaseModel {
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
+  @Column(name = "project_id", columnDefinition = "uuid")
+  private UUID projectId;
+
   @Column(name = "task_id", columnDefinition = "uuid")
   private UUID taskId;
 

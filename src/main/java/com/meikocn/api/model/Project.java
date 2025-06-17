@@ -32,4 +32,11 @@ public class Project extends BaseModel {
   @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, orphanRemoval = true)
   @JsonIgnoreProperties("project")
   private Set<Task> tasks;
+
+  @Column(name = "manager_id")
+  private String managerId;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "manager_id", insertable = false, updatable = false)
+  private User manager;
 }

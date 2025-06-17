@@ -36,7 +36,7 @@ public class ProjectController implements SecuredRestController {
 
   @GetMapping("/{id}")
   public ResponseEntity<?> getById(@PathVariable UUID id) {
-    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.____();
+    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.manager().____.____();
     Project project = projectService.getById(id, entityGraph, false);
     return ResponseEntity.ok(projectService.mapTaskData(project));
   }
@@ -64,7 +64,7 @@ public class ProjectController implements SecuredRestController {
           @ParameterObject
           Pageable pageable,
       @RequestParam(required = false, defaultValue = "") List<String> filter) {
-    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.____();
+    ProjectEntityGraph entityGraph = ProjectEntityGraph.____().tasks().____.manager().____.____();
     Page<Project> projectPage = projectService.getList(filter, pageable, entityGraph);
     return ResponseEntity.ok(projectService.mapTaskData(projectPage));
   }

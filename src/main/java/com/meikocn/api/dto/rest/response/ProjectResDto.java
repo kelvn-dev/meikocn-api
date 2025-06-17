@@ -11,6 +11,7 @@ public class ProjectResDto {
   private String description;
   private Long startDate;
   private Long endDate;
+  private UserResDto manager;
   private Integer progress;
   private Integer taskCount;
   private Integer doneTaskCount;
