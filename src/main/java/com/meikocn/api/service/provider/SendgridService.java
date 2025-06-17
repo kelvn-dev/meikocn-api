@@ -83,8 +83,12 @@ public class SendgridService {
     templateData.put("dateFormat", sendgridDateFormat);
     templateData.put("priority", task.getPriority().toString());
     templateData.put(
-        "link", String.format("%s/%s", clientConfig.getTaskDetailUrl(), task.getId().toString()));
+        "link",
+        String.format(
+            "%s?project-id=%s&task-id=%s",
+            clientConfig.getTaskDetailUrl(),
+            task.getProjectId().toString(),
+            task.getId().toString()));
     send(user.getEmail(), SendGridTemplate.TASK_REMINDER_TEMPLATE, templateData);
   }
 }
-// Tuesday, June 18, 2025
