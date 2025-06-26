@@ -40,18 +40,18 @@ services:
       - ./volumes/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - meikocn-network
-#  api:
-#    container_name: meikocn-api
-#    image: kelvn/meikocn-api:sha-7638b8e
-#  #    build:
-#  #      context: .
-#  #      dockerfile: Dockerfile
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - meikocn-network
-#    depends_on:
-#      - db
+  api:
+    container_name: meikocn-api
+    image: kelvn/meikocn-api:sha-f0c9ce1
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - meikocn-network
+    depends_on:
+      - db
   grafana:
     container_name: meikocn-lgtm
     image: 'docker.io/grafana/otel-lgtm:latest'
