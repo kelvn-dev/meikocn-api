@@ -1,6 +1,7 @@
 pipeline {
     agent any
 
+
     environment {
         IMAGE_NAME = "meikocn-api"
         TARGET_SERVER_PATH = "meikocn"
