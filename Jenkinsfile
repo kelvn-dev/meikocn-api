@@ -12,11 +12,6 @@ pipeline {
         DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
     }
 
-    // triggers {
-    //     // Trigger when pushing to main or dev branch
-    //     pollSCM('* * * * *') // or use webhook triggers if configured
-    // }
-
     stages {
         stage('Checkout Code') {
             steps {
