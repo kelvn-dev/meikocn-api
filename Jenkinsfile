@@ -17,11 +17,6 @@ pipeline {
             steps {
                 checkout scm
             }
-//             steps {
-//                 git branch: 'main',
-//                     url: 'https://github.com/kelvn-dev/meikocn-api.git',
-//                     credentialsId: 'github-credentials-id'
-//             }
         }
 
         stage('Get short SHA') {
