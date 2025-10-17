@@ -10,54 +10,54 @@ env:
   TARGET_SERVER_PATH: "meikocn"
 
 jobs:
-#  ci:
-#    runs-on: [ubuntu-latest]
-#    outputs:
-#      image_tag: sha-${{ steps.sha.outputs.short }}
-#    steps:
-#      - name: Code Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Get short SHA
-#        id: sha
-#        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-#
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: ${{ secrets.AWS_REGION }}
-#
-#      - name: Download application.yaml from S3
-#        env:
-#          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-#        run: |
-#          aws s3 cp s3://$S3_BUCKET_NAME/config/application.yaml src/main/resources/application.yaml
-#
-#      - name: Extract Metadata
-#        uses: docker/metadata-action@v5
-#        id: meta
-#        with:
-#          images: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}
-#          tags: type=sha
-#
-#      - name: Docker Login
-#        uses: docker/login-action@v2
-#        with:
-#          username: ${{secrets.DOCKER_USERNAME}}
-#          password: ${{secrets.DOCKER_PASSWORD}}
-#          logout: true
-#
-#      - name: Build And Push
-#        uses: docker/build-push-action@v5
-#        with:
-#          context: . # indicates the location of the Dockerfile
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#          labels: ${{ steps.meta.outputs.labels }}
+  ci:
+    runs-on: [ubuntu-latest]
+    outputs:
+      image_tag: sha-${{ steps.sha.outputs.short }}
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v3
+
+      - name: Get short SHA
+        id: sha
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Download application.yaml from S3
+        env:
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          aws s3 cp s3://$S3_BUCKET_NAME/config/application.yaml src/main/resources/application.yaml
+
+      - name: Extract Metadata
+        uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}
+          tags: type=sha
+
+      - name: Docker Login
+        uses: docker/login-action@v2
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+          logout: true
+
+      - name: Build And Push
+        uses: docker/build-push-action@v5
+        with:
+          context: . # indicates the location of the Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
   cd:
-#    needs: ci
+    needs: ci
     runs-on: ubuntu-latest
     steps:
       - name: Checkout manifests repo
@@ -72,18 +72,14 @@ jobs:
           cd manifests/api
           
           # Replace image line in deployment.yaml
-          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:sha-abcxyz|" deployment.yaml
-          cat deployment.yaml
-#          sed -i "s|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:.*|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
-
-
+          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
 
           # Commit and push changes
-#          git config user.name "github-actions"
-#          git config user.email "github-actions@github.com"
-#          git add deployment.yaml
-#          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
-#          git push origin main
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add deployment.yaml
+          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
+          git push origin main
 
 #  cd:
 #    needs: ci
