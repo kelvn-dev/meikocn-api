@@ -57,31 +57,56 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   cd:
-    needs: ci
     runs-on: ubuntu-latest
+    needs: build-and-push
     steps:
-      - name: Install Cloudflared
-        run: |
-          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-          sudo dpkg -i cloudflared.deb
-          rm cloudflared.deb
+      - name: Checkout manifests repo
+        uses: actions/checkout@v4
+        with:
+          repository: kelvn-dev/meikocn-manifest
+          token: ${{ secrets.MANIFEST_CD_PAT }}
+          path: manifests
 
-      - name: Create SSH key
+      - name: Update api/deployment.yaml image
         run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_ssh_key
-          chmod 600 ~/.ssh/deploy_ssh_key
+          cd meikocn-manifests/api
 
-      - name: Deploy to remote server
-        run: |
-          ssh -i ~/.ssh/deploy_ssh_key -o StrictHostKeyChecking=no \
-              -o IdentitiesOnly=yes \
-              -o ProxyCommand='cloudflared access ssh --hostname %h' \
-              ${{secrets.SERVER_USERNAME}}@${{secrets.SERVER_SSH_HOST}} "
-            mkdir -p ~/.docker && echo '{\"credsStore\":\"\"}' > ~/.docker/config.json && \
-            cd ~/${{env.TARGET_SERVER_PATH}} && \
-            pwd && \
-            ls -a && \
-            sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" docker-compose.yml && \
-            DOCKER_CONFIG=~/.docker /usr/local/bin/docker compose up -d
-          "
+          # Replace image line in deployment.yaml
+          sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" deployment.yaml
+
+          # Commit and push changes
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add deployment.yaml
+          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
+          git push origin main
+
+#  cd:
+#    needs: ci
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Install Cloudflared
+#        run: |
+#          curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+#          sudo dpkg -i cloudflared.deb
+#          rm cloudflared.deb
+#
+#      - name: Create SSH key
+#        run: |
+#          mkdir -p ~/.ssh/
+#          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_ssh_key
+#          chmod 600 ~/.ssh/deploy_ssh_key
+#
+#      - name: Deploy to remote server
+#        run: |
+#          ssh -i ~/.ssh/deploy_ssh_key -o StrictHostKeyChecking=no \
+#              -o IdentitiesOnly=yes \
+#              -o ProxyCommand='cloudflared access ssh --hostname %h' \
+#              ${{secrets.SERVER_USERNAME}}@${{secrets.SERVER_SSH_HOST}} "
+#            mkdir -p ~/.docker && echo '{\"credsStore\":\"\"}' > ~/.docker/config.json && \
+#            cd ~/${{env.TARGET_SERVER_PATH}} && \
+#            pwd && \
+#            ls -a && \
+#            sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" docker-compose.yml && \
+#            DOCKER_CONFIG=~/.docker /usr/local/bin/docker compose up -d
+#          "
