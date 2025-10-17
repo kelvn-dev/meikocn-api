@@ -72,7 +72,7 @@ jobs:
           cd manifests/api
           
           # Replace image line in deployment.yaml
-          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{secrets.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{secrets.IMAGE_NAME}}:sha-abcxyz|" deployment.yaml
+          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:sha-abcxyz|" deployment.yaml
           cat deployment.yaml
 #          sed -i "s|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:.*|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
 
