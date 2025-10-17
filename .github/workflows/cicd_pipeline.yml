@@ -75,14 +75,17 @@ jobs:
           ls -a
 
           # Replace image line in deployment.yaml
-          sed -i "s|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:.*|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
-          
+          sed -i "s|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:.*|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:sha-abcxyz|" deployment.yaml
+#          sed -i "s|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:.*|image: ${DOCKER_USERNAME}/${IMAGE_NAME}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
+
+          cat deployment.yaml
+
           # Commit and push changes
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add deployment.yaml
-          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
-          git push origin main
+#          git config user.name "github-actions"
+#          git config user.email "github-actions@github.com"
+#          git add deployment.yaml
+#          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
+#          git push origin main
 
 #  cd:
 #    needs: ci
