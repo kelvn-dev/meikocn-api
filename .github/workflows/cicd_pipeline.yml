@@ -69,7 +69,7 @@ jobs:
 
       - name: Update api/deployment.yaml image
         run: |
-          cd meikocn-manifests/api
+          cd meikocn-manifest/api
 
           # Replace image line in deployment.yaml
           sed -i '' \"s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{needs.ci.outputs.image_tag}}|\" deployment.yaml
