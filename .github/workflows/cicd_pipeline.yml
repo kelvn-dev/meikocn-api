@@ -67,19 +67,33 @@ jobs:
           token: ${{ secrets.MANIFEST_CD_PAT }}
           path: manifests
 
-      - name: Update api/deployment.yaml image
+      - name: Update helm values
         run: |
-          cd manifests/api
+          cd manifests/meikocn
           
-          # Replace image line in deployment.yaml
-          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
+          # Replace image line in values.yaml
+          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{ needs.ci.outputs.image_tag }}|" values.yaml
 
           # Commit and push changes
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add deployment.yaml
+          git add values.yaml
           git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
           git push origin main
+
+#      - name: Update k8s manifest files
+#        run: |
+#          cd manifests/api
+#
+#          # Replace image line in deployment.yaml
+#          sed -i "s|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:.*|image: ${{secrets.DOCKER_USERNAME}}/${{env.IMAGE_NAME}}:${{ needs.ci.outputs.image_tag }}|" deployment.yaml
+#
+#          # Commit and push changes
+#          git config user.name "github-actions"
+#          git config user.email "github-actions@github.com"
+#          git add deployment.yaml
+#          git commit -m "chore: update meikocn-api image to ${{needs.ci.outputs.image_tag}}"
+#          git push origin main
 
 #  cd:
 #    needs: ci
