@@ -1,7 +1,5 @@
 package com.meikocn.api.service.provider;
 
-import com.auth0.client.auth.AuthAPI;
-import com.auth0.client.mgmt.ManagementAPI;
 import com.auth0.client.mgmt.filter.PageFilter;
 import com.auth0.client.mgmt.filter.UserFilter;
 import com.auth0.exception.APIException;
@@ -28,14 +26,15 @@ public class Auth0Service {
 
   private Auth0Config auth0Config;
   private Auth0ClientConfig auth0ClientConfig;
-  private ManagementAPI managementAPI;
-  private AuthAPI authAPI;
+
+  //  private ManagementAPI managementAPI;
+  //  private AuthAPI authAPI;
 
   public Auth0Service(Auth0Config auth0Config, Auth0ClientConfig auth0ClientConfig) {
     this.auth0Config = auth0Config;
     this.auth0ClientConfig = auth0ClientConfig;
-    this.managementAPI = this.auth0ClientConfig.getManagementAPI();
-    this.authAPI = this.auth0ClientConfig.getAuthAPI();
+    //    this.managementAPI = this.auth0ClientConfig.getManagementAPI();
+    //    this.authAPI = this.auth0ClientConfig.getAuthAPI();
   }
 
   private <T> T executeRequest(Request<T> request) {
@@ -52,7 +51,8 @@ public class Auth0Service {
   public User getUserById(String userId) {
     UserFilter userFilter = new UserFilter();
     userFilter.withConnection(auth0Config.getDbConnection());
-    Request<User> request = managementAPI.users().get(userId, userFilter);
+    Request<User> request =
+        this.auth0ClientConfig.getManagementAPI().users().get(userId, userFilter);
     return executeRequest(request);
   }
 
@@ -61,7 +61,7 @@ public class Auth0Service {
     user.setEmail(email);
     user.setEmailVerified(true);
     user.setPassword(RandomUtils.generateUrlSafeRandomString(16).toCharArray());
-    Request<User> request = managementAPI.users().create(user);
+    Request<User> request = this.auth0ClientConfig.getManagementAPI().users().create(user);
     user = executeRequest(request);
 
     if (!permissions.isEmpty()) {
@@ -76,7 +76,10 @@ public class Auth0Service {
                   })
               .toList();
       Request<Void> permissionRequest =
-          managementAPI.users().addPermissions(user.getId(), auth0Permissions);
+          this.auth0ClientConfig
+              .getManagementAPI()
+              .users()
+              .addPermissions(user.getId(), auth0Permissions);
       executeRequest(permissionRequest);
     }
 
@@ -86,7 +89,7 @@ public class Auth0Service {
   @Cacheable(value = "userPermissionCache", key = "#userId")
   public List<Permission> getPermissionsByUserId(String userId) {
     Request<PermissionsPage> request =
-        managementAPI.users().listPermissions(userId, new PageFilter());
+        this.auth0ClientConfig.getManagementAPI().users().listPermissions(userId, new PageFilter());
     PermissionsPage permissionsPage = executeRequest(request);
     return permissionsPage.getItems();
   }
@@ -104,7 +107,11 @@ public class Auth0Service {
                     return permission;
                   })
               .toList();
-      Request<Void> addRequest = managementAPI.users().addPermissions(userId, permissionsToAdd);
+      Request<Void> addRequest =
+          this.auth0ClientConfig
+              .getManagementAPI()
+              .users()
+              .addPermissions(userId, permissionsToAdd);
       executeRequest(addRequest);
     }
 
@@ -121,21 +128,27 @@ public class Auth0Service {
               .toList();
 
       Request<Void> removeRequest =
-          managementAPI.users().removePermissions(userId, permissionsToRemove);
+          this.auth0ClientConfig
+              .getManagementAPI()
+              .users()
+              .removePermissions(userId, permissionsToRemove);
       executeRequest(removeRequest);
     }
   }
 
   @CacheEvict(cacheNames = "userPermissionCache", key = "#userId")
   public void deleteUser(String userId) {
-    Request<Void> request = managementAPI.users().delete(userId);
+    Request<Void> request = this.auth0ClientConfig.getManagementAPI().users().delete(userId);
     executeRequest(request);
   }
 
   @Cacheable(value = "auth0PermissionCache")
   public List<Scope> getPermissions() {
     Request<ResourceServer> request =
-        managementAPI.resourceServers().get(auth0Config.getApiIdentifier());
+        this.auth0ClientConfig
+            .getManagementAPI()
+            .resourceServers()
+            .get(auth0Config.getApiIdentifier());
     ResourceServer resourceServer = executeRequest(request);
     return resourceServer.getScopes();
   }
@@ -143,12 +156,13 @@ public class Auth0Service {
   public User updatePassword(String userId, String password) {
     User user = new User(auth0Config.getDbConnection());
     user.setPassword(password.toCharArray());
-    Request<User> request = managementAPI.users().update(userId, user);
+    Request<User> request = this.auth0ClientConfig.getManagementAPI().users().update(userId, user);
     return executeRequest(request);
   }
 
   public TokenHolder login(String email, String password) {
-    TokenRequest tokenRequest = authAPI.login(email, password.toCharArray());
+    TokenRequest tokenRequest =
+        this.auth0ClientConfig.getAuthAPI().login(email, password.toCharArray());
     return executeRequest(tokenRequest);
   }
 }
