@@ -38,6 +38,7 @@ public class SecurityConfig {
     "/v3/api-docs/**",
     "/error/**",
     "/v1/user-action/**",
+    "/health-check/**",
     "/stomp/**" // To allow the initial HTTP call to stomp handshake endpoint
   };
 

@@ -9,5 +9,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "server")
 public class ServerConfig {
   private String port;
-  private String defaultPassword;
+  private String liveMessage;
 }
