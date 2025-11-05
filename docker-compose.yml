@@ -40,23 +40,23 @@ services:
       - ./volumes/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - meikocn-network
-#  api:
-#    container_name: meikocn-api
-#    image: kelvn/meikocn-api:sha-f25bf9b
-#    environment:
-#      SERVER_LIVE_MESSAGE: "override_value"
-#    #    build:
-#  #      context: .
-#  #      dockerfile: Dockerfile
-#    ports:
-#      - "8080:8080"
-#    networks:
-#      - meikocn-network
-#    depends_on:
-#      - db
-#      - redis
-#      - rabbitmq
-#      - grafana
+  api:
+    container_name: meikocn-api
+    image: kelvn/meikocn-api:sha-f25bf9b
+    environment:
+      SERVER_LIVE_MESSAGE: "override_value"
+    #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - meikocn-network
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+      - grafana
   grafana:
     container_name: meikocn-lgtm
     image: 'docker.io/grafana/otel-lgtm:latest'
