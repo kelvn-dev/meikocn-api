@@ -57,21 +57,21 @@ services:
       - redis
       - rabbitmq
       - grafana
-  grafana:
-    container_name: meikocn-lgtm
-    image: 'docker.io/grafana/otel-lgtm:latest'
-    ports:
-      - '3000:3000'
-      - '4317:4317'
-      - '4318:4318'
-    volumes:
-      - './volumes/grafana:/data/grafana'
-      - './volumes/prometheus:/data/prometheus'
-      - './volumes/loki:/loki'
-    networks:
-      - meikocn-network
-    environment:
-      - GF_PATHS_DATA=/data/grafana
+#  grafana:
+#    container_name: meikocn-lgtm
+#    image: 'docker.io/grafana/otel-lgtm:latest'
+#    ports:
+#      - '3000:3000'
+#      - '4317:4317'
+#      - '4318:4318'
+#    volumes:
+#      - './volumes/grafana:/data/grafana'
+#      - './volumes/prometheus:/data/prometheus'
+#      - './volumes/loki:/loki'
+#    networks:
+#      - meikocn-network
+#    environment:
+#      - GF_PATHS_DATA=/data/grafana
 
 
 networks:

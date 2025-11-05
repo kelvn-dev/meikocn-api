@@ -71,10 +71,10 @@
       <artifactId>sendgrid-java</artifactId>
       <version>${sendgrid-java.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.opentelemetry.instrumentation</groupId>
-      <artifactId>opentelemetry-spring-boot-starter</artifactId>
-    </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>io.opentelemetry.instrumentation</groupId>-->
+    <!--      <artifactId>opentelemetry-spring-boot-starter</artifactId>-->
+    <!--    </dependency>-->
     <dependency>
       <groupId>io.projectreactor.netty</groupId>
       <artifactId>reactor-netty</artifactId>
