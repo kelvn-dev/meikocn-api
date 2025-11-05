@@ -39,6 +39,7 @@ public class SecurityConfig {
     "/error/**",
     "/v1/user-action/**",
     "/health-check/**",
+    "/actuator/**",
     "/stomp/**" // To allow the initial HTTP call to stomp handshake endpoint
   };
 

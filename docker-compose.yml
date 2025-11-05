@@ -42,8 +42,10 @@ services:
       - meikocn-network
 #  api:
 #    container_name: meikocn-api
-#    image: kelvn/meikocn-api:sha-d93cb4e
-#  #    build:
+#    image: kelvn/meikocn-api:sha-f25bf9b
+#    environment:
+#      SERVER_LIVE_MESSAGE: "override_value"
+#    #    build:
 #  #      context: .
 #  #      dockerfile: Dockerfile
 #    ports:
@@ -52,6 +54,9 @@ services:
 #      - meikocn-network
 #    depends_on:
 #      - db
+#      - redis
+#      - rabbitmq
+#      - grafana
   grafana:
     container_name: meikocn-lgtm
     image: 'docker.io/grafana/otel-lgtm:latest'
