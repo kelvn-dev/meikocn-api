@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1765079126064-19
+      author: kelvin
+      preConditions:
+        onFail: MARK_RAN
+        tableExists:
+          tableName: students
+      changes:
+        - dropTable:
+            tableName: students
