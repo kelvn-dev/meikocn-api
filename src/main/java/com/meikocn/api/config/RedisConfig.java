@@ -45,6 +45,7 @@ public class RedisConfig {
     RedisCacheConfiguration redisCacheConfiguration =
         RedisCacheConfiguration.defaultCacheConfig()
             .entryTtl(Duration.ofMinutes(DEFAULT_CACHE_TTL_IN_MIN))
+            .disableCachingNullValues()
             .serializeValuesWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(
                     redisTemplate.getValueSerializer()));
