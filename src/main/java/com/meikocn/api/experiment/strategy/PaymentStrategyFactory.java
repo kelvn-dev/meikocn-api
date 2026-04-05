@@ -1,4 +1,4 @@
-package com.meikocn.api.pattern.strategy;
+package com.meikocn.api.experiment.strategy;
 
 import java.util.EnumMap;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.meikocn.api.service.transaction;
+package com.meikocn.api.experiment.transaction;
 
 import com.meikocn.api.exception.BadRequestException;
 import jakarta.validation.Valid;

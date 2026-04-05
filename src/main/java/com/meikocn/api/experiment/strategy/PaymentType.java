@@ -1,4 +1,4 @@
-package com.meikocn.api.pattern.strategy;
+package com.meikocn.api.experiment.strategy;
 
 public enum PaymentType {
   CREDIT_CARD,

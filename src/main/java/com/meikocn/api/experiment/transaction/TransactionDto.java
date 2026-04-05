@@ -1,4 +1,4 @@
-package com.meikocn.api.service.transaction;
+package com.meikocn.api.experiment.transaction;
 
 import lombok.Data;
 
