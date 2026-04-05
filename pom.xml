@@ -21,6 +21,7 @@
     <auth0.version>2.10.0</auth0.version>
     <aws.java.sdk.version>2.24.10</aws.java.sdk.version>
     <querydsl.version>5.1.0</querydsl.version>
+    <easy-random.version>5.0.0</easy-random.version>
     <spotless-maven-plugin.version>2.37.0</spotless-maven-plugin.version>
     <apt-maven-plugin.version>1.1.3</apt-maven-plugin.version>
     <sendgrid-java.version>4.9.3</sendgrid-java.version>
@@ -97,6 +98,11 @@
       <groupId>org.hibernate.orm</groupId>
       <artifactId>hibernate-core</artifactId>
       <version>${hibernate.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jeasy</groupId>
+      <artifactId>easy-random-core</artifactId>
+      <version>${easy-random.version}</version>
     </dependency>
     <dependency>
       <groupId>org.liquibase</groupId>

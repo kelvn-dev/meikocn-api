@@ -9,3 +9,129 @@ databaseChangeLog:
       changes:
         - dropTable:
             tableName: students
+#databaseChangeLog:
+#- changeSet:
+#    id: 1775368346718-3
+#    author: kelvin (generated)
+#    changes:
+#    - dropForeignKeyConstraint:
+#        baseTableName: qrtz_blob_triggers
+#        constraintName: qrtz_blob_triggers_sched_name_trigger_name_trigger_group_fkey
+#- changeSet:
+#    id: 1775368346718-4
+#    author: kelvin (generated)
+#    changes:
+#    - dropForeignKeyConstraint:
+#        baseTableName: qrtz_cron_triggers
+#        constraintName: qrtz_cron_triggers_sched_name_trigger_name_trigger_group_fkey
+#- changeSet:
+#    id: 1775368346718-5
+#    author: kelvin (generated)
+#    changes:
+#    - dropForeignKeyConstraint:
+#        baseTableName: qrtz_simple_triggers
+#        constraintName: qrtz_simple_triggers_sched_name_trigger_name_trigger_group_fkey
+#- changeSet:
+#    id: 1775368346718-6
+#    author: kelvin (generated)
+#    changes:
+#    - dropForeignKeyConstraint:
+#        baseTableName: qrtz_simprop_triggers
+#        constraintName: qrtz_simprop_triggers_sched_name_trigger_name_trigger_grou_fkey
+#- changeSet:
+#    id: 1775368346718-7
+#    author: kelvin (generated)
+#    changes:
+#    - dropForeignKeyConstraint:
+#        baseTableName: qrtz_triggers
+#        constraintName: qrtz_triggers_sched_name_job_name_job_group_fkey
+#- changeSet:
+#    id: 1775368346718-2
+#    author: kelvin (generated)
+#    changes:
+#    - addUniqueConstraint:
+#        columnNames: id
+#        constraintName: UC_APP_USERID_COL
+#        tableName: app_user
+#- changeSet:
+#    id: 1775368346718-8
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: employee
+#- changeSet:
+#    id: 1775368346718-9
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_blob_triggers
+#- changeSet:
+#    id: 1775368346718-10
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_calendars
+#- changeSet:
+#    id: 1775368346718-11
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_cron_triggers
+#- changeSet:
+#    id: 1775368346718-12
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_fired_triggers
+#- changeSet:
+#    id: 1775368346718-13
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_job_details
+#- changeSet:
+#    id: 1775368346718-14
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_locks
+#- changeSet:
+#    id: 1775368346718-15
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_paused_trigger_grps
+#- changeSet:
+#    id: 1775368346718-16
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_scheduler_state
+#- changeSet:
+#    id: 1775368346718-17
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_simple_triggers
+#- changeSet:
+#    id: 1775368346718-18
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_simprop_triggers
+#- changeSet:
+#    id: 1775368346718-19
+#    author: kelvin (generated)
+#    changes:
+#    - dropTable:
+#        tableName: qrtz_triggers
+#- changeSet:
+#    id: 1775368346718-1
+#    author: kelvin (generated)
+#    changes:
+#    - addNotNullConstraint:
+#        columnDataType: uuid
+#        columnName: task_id
+#        tableName: comment
+#        validate: true
+#

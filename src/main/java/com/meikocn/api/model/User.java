@@ -55,6 +55,8 @@ public class User {
   @Column(name = "updated_by")
   private String updatedBy;
 
+  @Version private Long version;
+
   // @Column(name = "is_deleted")
   // private boolean isDeleted;
 
